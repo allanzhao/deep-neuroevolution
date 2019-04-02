@@ -151,13 +151,12 @@ def run_master(master_redis_cfg, log_dir, exp):
         tlogger.record_tabular("TimeElapsed", step_tend - tstart)
         tlogger.dump_tabular()
 
-        # if config.snapshot_freq != 0 and curr_task_id % config.snapshot_freq == 0:
-        if config.snapshot_freq != 0:
+        if config.snapshot_freq != 0 and curr_task_id % config.snapshot_freq == 0:
             import os.path as osp
-            filename = 'snapshot_iter{:05d}_rew{}.h5'.format(
+            filename = osp.join(tlogger.get_dir(), 'snapshot_iter{:05d}_rew{}.h5'.format(
                 curr_task_id,
                 np.nan if not eval_rets else int(np.mean(eval_rets))
-            )
+            ))
             assert not osp.exists(filename)
             policy.save(filename)
             tlogger.log('Saved snapshot {}'.format(filename))
